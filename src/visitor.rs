@@ -864,6 +864,8 @@ impl<'b, 'a: 'b> FmtVisitor<'a> {
     }
 
     fn walk_stmts(&mut self, stmts: &[Stmt<'_>], include_current_empty_semi: bool) {
+        debug!("KNTL {:?}", stmts.into_iter().map(|x| x.as_ast_node()).collect::<Vec<_>>());
+
         if stmts.is_empty() {
             return;
         }
@@ -907,7 +909,24 @@ impl<'b, 'a: 'b> FmtVisitor<'a> {
     }
 
     fn walk_block_stmts(&mut self, b: &ast::Block) {
-        self.walk_stmts(&Stmt::from_ast_nodes(b.stmts.iter()), false)
+        self.walk_stmts(&Stmt::from_ast_nodes(ast::Block{
+            stmts: if self.config.lift_imports() {
+                let mut sorted_stmts = b.stmts.clone();
+                sorted_stmts.sort_by_key(|x| match &x.kind {
+                    ast::StmtKind::Item(ptr_item) => {
+                        match ptr_item.clone().into_inner().kind {
+                            ast::ItemKind::Use(..) => 0,
+                            _  => 1,
+                        }
+                    },
+                    _ => 1,
+                });
+                sorted_stmts
+            } else {
+                b.stmts.clone()
+            },
+            ..b.clone()
+        }.stmts.iter()), false)
     }
 
     fn format_mod(

@@ -626,6 +626,7 @@ config_option_with_style_edition_default!(
     ImportsGranularityConfig, ImportGranularity, _ => ImportGranularity::Preserve;
     GroupImportsTacticConfig, GroupImportsTactic, _ => GroupImportsTactic::Preserve;
     MergeImports, bool, _ => false;
+    LiftImports, bool, _ => false;
 
     // Ordering
     ReorderImports, bool, _ => true;

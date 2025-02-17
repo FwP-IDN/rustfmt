@@ -96,6 +96,7 @@ create_config! {
     group_imports: GroupImportsTacticConfig, false,
         "Controls the strategy for how imports are grouped together";
     merge_imports: MergeImports, false, "(deprecated: use imports_granularity instead)";
+    lift_imports: LiftImports, false, "Lift import into top of block";
 
     // Ordering
     reorder_imports: ReorderImports, true, "Reorder import and extern crate statements \
